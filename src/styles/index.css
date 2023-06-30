@@ -34,3 +34,7 @@
 .register-button {
   padding: 2px 5px;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
