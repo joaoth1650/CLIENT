@@ -15,9 +15,11 @@ const App = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = (searchResults.length > 0 ? searchResults : listGames).slice(indexOfFirstItem, indexOfLastItem);
 
-
+/////////////
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-    setCurrentPage(page);
+    axios.get(`http://localhost:3001/consultaPage/?page=${page}&size=10`).then((response) => {
+      setCurrentPage(page)
+    })
   };
 
   useEffect(() => {
@@ -25,6 +27,7 @@ const App = () => {
       setListGames(response.data);
     });
   }, []);
+//////////////
 
   const handleRegisterGame = () => {
     axios.post("http://localhost:3001/register", {
