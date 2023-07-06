@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 // import '../styles/index.css';
 import { Pagination } from '@mui/material';
-import Card from '../components/card/card';
+import Card from '../../components/card/card';
 
 const App = () => {
   const [nameValue, setNameValue] = useState<string>('')
@@ -51,7 +51,7 @@ const App = () => {
   //////////////
   const fetchGamesData = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/");
+      const response = await axios.get("http://localhost:3001/games");
       const gamesData = response.data;
       setTotalPages(Math.ceil(gamesData.length / itemsPerPage));
       setCurrentPageData(gamesData.slice(0, itemsPerPage));
@@ -71,7 +71,7 @@ const App = () => {
 
   const handlePageChange = (event: any, page: number) => {
     const requestedPage = page - 1
-    const url = `http://localhost:3001/consultaPage/?page=${requestedPage}&size=${itemsPerPage}`;
+    const url = `http://localhost:3001/games/consultaPage/?page=${requestedPage}&size=${itemsPerPage}`;
 
     axios.get(url)
       .then(response => {
@@ -84,7 +84,7 @@ const App = () => {
   };
 
   const handleRegisterGame = () => {
-    axios.post("http://localhost:3001/register", {
+    axios.post("http://localhost:3001/games/register", {
       name: nameValue,
       cost: costValue,
       category: selectValue,
@@ -107,7 +107,7 @@ const App = () => {
     event.preventDefault(); // Evita o comportamento padrão de recarregar a página
 
     if (NameValueSearch !== '') {
-      axios.get(`http://localhost:3001/${NameValueSearch}`).then((response) => {
+      axios.get(`http://localhost:3001/games/${NameValueSearch}`).then((response) => {
         setCurrentPageData(response.data);
         setCurrentPage(1);
       });
