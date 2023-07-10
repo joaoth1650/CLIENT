@@ -9,7 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Axios from "axios";
 
 
-const FormDialog = (props) => {
+const FormDialog = (props: any) => {
   const [editValues, setEditValues] = useState({
     id: props.id,
     name: props.title,
@@ -17,7 +17,7 @@ const FormDialog = (props) => {
     category: props.category,
   });
 
-  const handleChangeValues = (values) => {
+  const handleChangeValues = (values: any) => {
     setEditValues((prevValues) => ({
       ...prevValues,
       [values.target.id]: values.target.value,
@@ -29,14 +29,14 @@ const FormDialog = (props) => {
   };
 
   const handleEditGame = () => {
-    Axios.put("http://localhost:3001/edit", {
+    Axios.put("http://localhost:3001/games/edit", {
       id: editValues.id,
       name: editValues.name,
       cost: editValues.cost,
       category: editValues.category,
     }).then(() => {
       props.setListCard(
-        props.listCard.map((value) => {
+        props.listCard.map((value: any) => {
           return value.id == editValues.id
             ? {
                 id: editValues.id,
@@ -52,9 +52,9 @@ const FormDialog = (props) => {
   };
 
   const handleDeleteGame = () => {
-    Axios.delete(`http://localhost:3001/delete/${editValues.id}`).then(() => {
+    Axios.delete(`http://localhost:3001/games/delete/${editValues.id}`).then(() => {
       props.setListCard(
-        props.listCard.filter((value) => {
+        props.listCard.filter((value: any) => {
           return value.id != editValues.id;
         })
       );

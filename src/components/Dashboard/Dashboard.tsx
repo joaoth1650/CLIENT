@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 // import '../styles/index.css';
 import { Pagination } from '@mui/material';
-import Card from '../../components/card/card';
+import Card from '../card/card';
 
 const App = () => {
   const [nameValue, setNameValue] = useState<string>('')
@@ -48,10 +48,19 @@ const App = () => {
     "Jogos de Plataforma 3D"
   ]
 
+
+  const headers = {
+    'x-access-token': '',
+    'Content-Type': 'application/json',
+  };
+
+  
+
   //////////////
   const fetchGamesData = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/games");
+      headers['x-access-token'] = localStorage.getItem('token') ?? ""
+      const response = await axios.get("http://localhost:3001/games",  { headers });
       const gamesData = response.data;
       setTotalPages(Math.ceil(gamesData.length / itemsPerPage));
       setCurrentPageData(gamesData.slice(0, itemsPerPage));

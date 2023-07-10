@@ -1,32 +1,41 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import LayoutComponents from "../../components/LayoutComponents/"
-import axios from 'axios'
+import PropTypes from 'prop-types';
 import jake from '../../styles/jake.svg'
 
+async function registerUser(credentials: any) {
+  return fetch('http://localhost:3001/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(credentials)
+  })
+    .then(data => data.json())
+ }
 
-
-export const Register = () => {
+export const Register = ({ setToken }: any) => {
   const [email, setEmail] = useState("");
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleRegister = () => {
-    axios
-      .post('http://localhost:3001/register', { username, password })
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  };
+
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    const token = await registerUser({
+      username,
+      password
+    });
+    setToken(token);
+  }
 
 
 
   return (
     <LayoutComponents >
-      <form className="login-form">
+      <form className="login-form" onSubmit={handleSubmit}>
         <span className="login-form-title"> Criar Conta </span>
 
         <span className="login-form-title">
@@ -64,18 +73,19 @@ export const Register = () => {
         </div>
 
         <div className="container-login-form-btn"> 
-          <button className="login-form-btn" onClick={handleRegister}>Cadastrar</button>      
+        <button  className="login-form-btn" type="submit">Cadastrar</button>   
         </div>
 
         <div className="text-center">
           <span className="txt1">Já possui conta? </span>
-          <Link className="txt2" to="/users/login">
-            Acessar com Email e Senha.
-          </Link>
         </div>
       </form>
     </LayoutComponents>
   )
 }
+Register.propTypes = {
+  setToken: PropTypes.func.isRequired
+}
+
 
 export default Register;
