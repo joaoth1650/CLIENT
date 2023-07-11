@@ -37,6 +37,7 @@ const Login = ({ setToken }: any) => {
       password
     });
     setToken(token);
+    location.reload();
   }
 
   return (
@@ -45,7 +46,7 @@ const Login = ({ setToken }: any) => {
         <span className="login-form-title"> Bem vindo </span>
 
         <span className="login-form-title">
-          <img src={jake} alt="Jovem Programador" />
+          <img src={jake} alt="adventure dog" />
         </span>
 
         <div className="wrap-input">

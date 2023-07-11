@@ -9,6 +9,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Axios from "axios";
 
 
+
+const headers = {
+  'x-access-token': '',
+  'Content-Type': 'application/json',
+};
+
+
 const FormDialog = (props: any) => {
   const [editValues, setEditValues] = useState({
     id: props.id,
@@ -29,11 +36,14 @@ const FormDialog = (props: any) => {
   };
 
   const handleEditGame = () => {
-    Axios.put("http://localhost:3001/games/edit", {
+    headers['x-access-token'] = localStorage.getItem('token') ?? ""
+    Axios.put("http://localhost:3001/games/edit",  {
       id: editValues.id,
       name: editValues.name,
       cost: editValues.cost,
       category: editValues.category,
+    },  {
+      headers: headers
     }).then(() => {
       props.setListCard(
         props.listCard.map((value: any) => {
@@ -52,7 +62,10 @@ const FormDialog = (props: any) => {
   };
 
   const handleDeleteGame = () => {
-    Axios.delete(`http://localhost:3001/games/delete/${editValues.id}`).then(() => {
+    headers['x-access-token'] = localStorage.getItem('token') ?? ""
+    Axios.delete(`http://localhost:3001/games/delete/${editValues.id}`, {
+      headers: headers
+    }).then(() => {
       props.setListCard(
         props.listCard.filter((value: any) => {
           return value.id != editValues.id;

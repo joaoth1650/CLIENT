@@ -48,6 +48,11 @@ const App = () => {
     "Jogos de Plataforma 3D"
   ]
 
+  
+  useEffect(() => {
+    fetchGamesData();
+  }, []);
+  
 
   const headers = {
     'x-access-token': '',
@@ -69,20 +74,32 @@ const App = () => {
     }
   };
 
-  const fetchInitialData = async () => {
-    await fetchGamesData();
-  };
 
-  useEffect(() => {
-    fetchInitialData();
-  }, []);
+
   //////////////
 
+  const handleTokenChange = async () => {
+    headers['x-access-token'] = localStorage.getItem('token') ?? ""
+    const url = `http://localhost:3001/users/logout`;
+    axios.get(url, { headers: headers })
+    .then(res => {
+      localStorage.clear();
+      location.reload();
+    })
+    .catch(error => {
+      console.log(error)
+    });
+  }
+
+
   const handlePageChange = (event: any, page: number) => {
+    headers['x-access-token'] = localStorage.getItem('token') ?? ""
     const requestedPage = page - 1
     const url = `http://localhost:3001/games/consultaPage/?page=${requestedPage}&size=${itemsPerPage}`;
 
-    axios.get(url)
+    axios.get(url,  {
+      headers: headers
+    })
       .then(response => {
         setCurrentPage(page);
         setCurrentPageData(response.data.content);
@@ -93,10 +110,13 @@ const App = () => {
   };
 
   const handleRegisterGame = () => {
-    axios.post("http://localhost:3001/games/register", {
+    headers['x-access-token'] = localStorage.getItem('token') ?? ""
+    axios.post("http://localhost:3001/games/register",  {
       name: nameValue,
       cost: costValue,
       category: selectValue,
+    }, {
+      headers: headers
     }).then((response) => {
       const newGame = {
         id: response.data,
@@ -114,8 +134,9 @@ const App = () => {
 
   const handleSearchResult = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Evita o comportamento padrão de recarregar a página
-
+    headers['x-access-token'] = localStorage.getItem('token') ?? ""
     if (NameValueSearch !== '') {
+      
       axios.get(`http://localhost:3001/games/${NameValueSearch}`).then((response) => {
         setCurrentPageData(response.data);
         setCurrentPage(1);
@@ -125,6 +146,7 @@ const App = () => {
       setCurrentPage(1);
     }
   };
+
 
 
   return (
@@ -159,6 +181,7 @@ const App = () => {
               <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" value={NameValueSearch} onChange={ (e) => setNameValueSearch(e.target.value)} />
               <button className="btn btn-outline-success" type="submit">Search</button>
             </form>
+            <button className="btn btn-outline-danger" onClick={handleTokenChange}>logout</button>
           </div>
         </div>
       </nav>

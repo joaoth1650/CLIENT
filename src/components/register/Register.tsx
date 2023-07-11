@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import jake from '../../styles/jake.svg'
 
 async function registerUser(credentials: any) {
-  return fetch('http://localhost:3001/register', {
+  return fetch('http://localhost:3001/users/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
