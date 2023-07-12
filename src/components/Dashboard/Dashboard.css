@@ -1,0 +1,18 @@
+.w-uau {
+  width: 80% !important;
+}
+
+.rounded-uau {
+  border-radius: 50% !important;
+  height: 100px;
+}
+
+.bg-escolha {
+  background-color: #e0b9e3;
+}
+
+.bg-foda {
+  background-image: url(../../styles/summer_sale.gif);
+  background-repeat: no-repeat, repeat-x;
+  background-position: top , center;
+}
