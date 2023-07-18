@@ -3,7 +3,7 @@ import axios from 'axios';
 // import '../styles/index.css';
 import { Pagination } from '@mui/material';
 import Card from '../card/card';
-
+import NewGame from '../newGame/newGame'
 const App = () => {
   const [nameValue, setNameValue] = useState<string>('')
   const [costValue, setCostValue] = useState<string>('')
@@ -13,6 +13,7 @@ const App = () => {
   const [currentPageData, setCurrentPageData] = useState<any[]>([]);
   const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
+  const [isCardVisible, setCardVisible] = useState(false);
   const categorias_de_jogos = [
     "Ação",
     "Aventura",
@@ -48,20 +49,15 @@ const App = () => {
     "Jogos de Plataforma 3D"
   ]
 
-  
   useEffect(() => {
     fetchGamesData();
   }, []);
   
-
   const headers = {
     'x-access-token': '',
     'Content-Type': 'application/json',
   };
 
-  
-
-  //////////////
   const fetchGamesData = async () => {
     try {
       headers['x-access-token'] = localStorage.getItem('token') ?? ""
@@ -74,9 +70,6 @@ const App = () => {
     }
   };
 
-
-
-  //////////////
 
   const handleTokenChange = async () => {
     headers['x-access-token'] = localStorage.getItem('token') ?? ""
@@ -109,29 +102,6 @@ const App = () => {
       });
   };
 
-  const handleRegisterGame = () => {
-    headers['x-access-token'] = localStorage.getItem('token') ?? ""
-    axios.post("http://localhost:3001/games/register",  {
-      name: nameValue,
-      cost: costValue,
-      category: selectValue,
-    }, {
-      headers: headers
-    }).then((response) => {
-      const newGame = {
-        id: response.data,
-        name: nameValue,
-        cost: costValue,
-        category: selectValue,
-      };
-
-      setCurrentPageData((prevData) => [...prevData, newGame]);
-      setNameValue('')
-      setCostValue('')
-      setSelectValue('')
-    });
-  };
-
   const handleSearchResult = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Evita o comportamento padrão de recarregar a página
     headers['x-access-token'] = localStorage.getItem('token') ?? ""
@@ -147,7 +117,9 @@ const App = () => {
     }
   };
 
-
+  const handleButtonClick = () => {
+    setCardVisible(!isCardVisible);
+  };
 
   return (
     <div className="container">
@@ -185,34 +157,13 @@ const App = () => {
           </div>
         </div>
       </nav>
-      <div className="container card mt-3 px-2">
-        <h1 className="text-center">lojinha gamer</h1>
-        <div className="input-group mb-3">
-          <span className="input-group-text">nome</span>
-          <input
-            type="text"
-            value={nameValue}
-            onChange={(e) => setNameValue(e.target.value)}
-            className="form-control" />
-        </div>
-        <div className="input-group mb-3">
-          <span className="input-group-text">preço</span>
-          <input
-            type="text"
-            value={costValue}
-            onChange={(e) => setCostValue(e.target.value)}
-            className="form-control" />
-        </div>
-
-        <select id="select" name="category" className="form-select form-select-md mb-2" value={selectValue} onChange={(e) => setSelectValue(e.target.value)}>
-          <option value="">Selecione uma categoria...</option>
-          {categorias_de_jogos.map((categoria, index) => (
-            <option key={index} value={categoria}>{categoria}</option>
-          ))}
-        </select>
-
-        <button className="btn btn-success  mb-2" onClick={handleRegisterGame}>Cadastrar</button>
+      <br />
+      <div className="row">
+      {!isCardVisible && <button  className="btn btn-danger col-2 mx-auto"onClick={handleButtonClick}>Mostrar Card</button>}
+      <NewGame isVisible={isCardVisible} />
+      <div className="btn btn-danger mt-4 col-2 mx-auto">Busca por filtro</div>
       </div>
+      <br />
       <div className="row">
         {currentPageData.map((val: any, index) => (
           <div className="col-sm-6 col-md-3 " key={val.id}>
