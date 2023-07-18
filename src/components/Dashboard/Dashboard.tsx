@@ -17,6 +17,7 @@ const App = () => {
   const [NameValueSearch, setNameValueSearch] = useState<string>('')
   const [selectValue, setSelectValue] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [checked, setChecked] = useState<boolean>(false)
   const [currentPageData, setCurrentPageData] = useState<any[]>([]);
   const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
@@ -117,10 +118,24 @@ const App = () => {
     setCardVisible2(!isCardVisible2);
   };
 
+  const handleRegisterFavorite = (name: string,category: string, cost: string) => {
+    headers['x-access-token'] = localStorage.getItem('token') ?? ""
+    axios.post("http://localhost:3001/favorites/register",  {
+      name: name,
+      cost: cost,
+      category: category,
+    }, {
+      headers: headers
+    }).then((response) => {
+      setChecked(true)
+    });
+  };
+
+
   return (
-    <div className="">
-      <div className="container ">
-        <nav className="navbar navbar-expand-lg bg-light rounded-3 bg-dark ">
+    <div className="bg-foda">
+      <div className="container">
+        <nav className="navbar navbar-expand-lg bg-light redondo bg-dark ">
           <div className="container-fluid ">
             <a className="navbar-brand text-light" href="http://localhost:5173/?">Lojinha games</a>
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
@@ -128,10 +143,10 @@ const App = () => {
                 <li className="nav-item">
                   <a className="nav-link active text-light" aria-current="page" href="#">Home</a>
                 </li>
-                <li className="nav-item mt-2">
+                <li className="nav-item mt-2 ms-4">
                   <Link to="/favorites" className='NAOAMIGO text-light'>WishList</Link>
                 </li>
-                <div className=" ms-1 btn btn-light"><ShoppingCartOutlinedIcon /></div>
+                <div className=" ms-4 btn btn-light"><ShoppingCartOutlinedIcon /></div>
               </ul>
               <img src={perfil} className="rounded me-3" style={{ height: '60px' }} />
               <button className="btn btn-outline-danger" onClick={handleTokenChange}>logout</button>
@@ -145,17 +160,19 @@ const App = () => {
           <Search isVisible={isCardVisible2} />
         </div>
       </div>
-      <br />
-      <div className="row bg-holly bg-foda">
-        {currentPageData.map((val: any, index) => (
-          <div className="col-sm-6 col-md-3 d-flex justify-content-center" key={val.id}>
+      <br/>
+      <div className="row">
+        {currentPageData.map((val: any, index) => (         
+          <div className="col-sm-6 col-md-3 d-flex justify-content-center" key={val.id}>           
             <Card
               listCard={currentPageData}
               setListCard={setCurrentPageData}
+              checked={setChecked}           
+              handleRegisterFavorite={handleRegisterFavorite}
               id={val.id}
-              name={val.name}
+              name={val.name}            
               cost={val.cost}
-              category={val.category}
+              category={val.category}              
             />
           </div>
         ))}
@@ -175,7 +192,7 @@ const App = () => {
         <div className="col-sm-3 col-md-3"></div>
       </div>
       </div>
-      <div className="bg-holly">
+      <div className="bg-fodaParteCima">
       </div>
       <footer>
         <div id="footer_content">

@@ -12,14 +12,23 @@
 }
 
 .bg-foda {
-  border-radius: 50px 50px 0px 0px;
+  border-radius: 0px 0px 0px 0px;
+  background-image: url(../../styles/summer_sale.gif);
+  background-repeat: no-repeat;
+  background-position: top , center;
+  background-size: 4000px;
+
+}
+.bg-fodaParteCima {
+  border-radius: 0px 0px 5px 5px;
   background-image: url(../../styles/summer_sale.gif);
   background-repeat: no-repeat, repeat-x;
-  background-position: top , center;
-}
-.bg-holly {
-  background-color: rgb(30, 60, 87);
+  background-position: bottom;
+  background-size: 3000px;
 }
 .NAOAMIGO {
   text-decoration: none;
+}
+.redondo {
+  border-radius: 0px 0px 40px 40px;
 }
