@@ -78,6 +78,7 @@ const NewGame: React.FC<CardProps> = ({ isVisible }) => {
       setCostValue('')
       setSelectValue('')
     });
+    location.reload();
   };
 
   return (

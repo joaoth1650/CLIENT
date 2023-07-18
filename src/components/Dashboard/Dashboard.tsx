@@ -1,9 +1,16 @@
 import { useState, useEffect } from 'react';
+import { Link }  from 'react-router-dom'
 import axios from 'axios';
-// import '../styles/index.css';
+import './Dashboard.css'
+import './index.css'
+import perfil from '../../styles/oms.jpg'
 import { Pagination } from '@mui/material';
 import Card from '../card/card';
-import NewGame from '../newGame/newGame'
+import NewGame from '../newGame/NewGame'
+import Search from '../search/Search'
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import WishList from '../wishlist/WishList';
+
 const App = () => {
   const [nameValue, setNameValue] = useState<string>('')
   const [costValue, setCostValue] = useState<string>('')
@@ -14,6 +21,7 @@ const App = () => {
   const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
   const [isCardVisible, setCardVisible] = useState(false);
+  const [isCardVisible2, setCardVisible2] = useState(false);
   const categorias_de_jogos = [
     "Ação",
     "Aventura",
@@ -52,7 +60,7 @@ const App = () => {
   useEffect(() => {
     fetchGamesData();
   }, []);
-  
+
   const headers = {
     'x-access-token': '',
     'Content-Type': 'application/json',
@@ -61,7 +69,7 @@ const App = () => {
   const fetchGamesData = async () => {
     try {
       headers['x-access-token'] = localStorage.getItem('token') ?? ""
-      const response = await axios.get("http://localhost:3001/games",  { headers });
+      const response = await axios.get("http://localhost:3001/games", { headers });
       const gamesData = response.data;
       setTotalPages(Math.ceil(gamesData.length / itemsPerPage));
       setCurrentPageData(gamesData.slice(0, itemsPerPage));
@@ -75,13 +83,13 @@ const App = () => {
     headers['x-access-token'] = localStorage.getItem('token') ?? ""
     const url = `http://localhost:3001/users/logout`;
     axios.get(url, { headers: headers })
-    .then(res => {
-      localStorage.clear();
-      location.reload();
-    })
-    .catch(error => {
-      console.log(error)
-    });
+      .then(res => {
+        localStorage.clear();
+        location.reload();
+      })
+      .catch(error => {
+        console.log(error)
+      });
   }
 
 
@@ -90,7 +98,7 @@ const App = () => {
     const requestedPage = page - 1
     const url = `http://localhost:3001/games/consultaPage/?page=${requestedPage}&size=${itemsPerPage}`;
 
-    axios.get(url,  {
+    axios.get(url, {
       headers: headers
     })
       .then(response => {
@@ -102,70 +110,45 @@ const App = () => {
       });
   };
 
-  const handleSearchResult = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Evita o comportamento padrão de recarregar a página
-    headers['x-access-token'] = localStorage.getItem('token') ?? ""
-    if (NameValueSearch !== '') {
-      
-      axios.get(`http://localhost:3001/games/${NameValueSearch}`).then((response) => {
-        setCurrentPageData(response.data);
-        setCurrentPage(1);
-      });
-    } else {
-      setCurrentPageData([]); // Limpa a lista de jogos quando o campo de pesquisa está vazio
-      setCurrentPage(1);
-    }
-  };
-
   const handleButtonClick = () => {
     setCardVisible(!isCardVisible);
   };
+  const handleButtonClickClick = () => {
+    setCardVisible2(!isCardVisible2);
+  };
 
   return (
-    <div className="container">
-      <nav className="navbar navbar-expand-lg bg-light rounded-3">
-        <div className="container-fluid">
-          <a className="navbar-brand" href="http://localhost:5173/?">Lojinha games</a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#">Home</a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">Whitelist</a>
-              </li>
-              <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Carrinho
-                </a>
-                <ul className="dropdown-menu">
-                  <li><a className="dropdown-item" href="#">Action</a></li>
-                  <li><a className="dropdown-item" href="#">Another action</a></li>
-                  <li><hr className="dropdown-divider" /></li>
-                  <li><a className="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-              </li>
-            </ul>
-            <form className="d-flex" onSubmit={handleSearchResult}>
-              <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" value={NameValueSearch} onChange={ (e) => setNameValueSearch(e.target.value)} />
-              <button className="btn btn-outline-success" type="submit">Search</button>
-            </form>
-            <button className="btn btn-outline-danger" onClick={handleTokenChange}>logout</button>
+    <div className="">
+      <div className="container ">
+        <nav className="navbar navbar-expand-lg bg-light rounded-3 bg-dark ">
+          <div className="container-fluid ">
+            <a className="navbar-brand text-light" href="http://localhost:5173/?">Lojinha games</a>
+            <div className="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                <li className="nav-item">
+                  <a className="nav-link active text-light" aria-current="page" href="#">Home</a>
+                </li>
+                <li className="nav-item mt-2">
+                  <Link to="/favorites" className='NAOAMIGO text-light'>WishList</Link>
+                </li>
+                <div className=" ms-1 btn btn-light"><ShoppingCartOutlinedIcon /></div>
+              </ul>
+              <img src={perfil} className="rounded me-3" style={{ height: '60px' }} />
+              <button className="btn btn-outline-danger" onClick={handleTokenChange}>logout</button>
+            </div>
           </div>
+        </nav>
+        <div className="row">
+          {!isCardVisible && <button className="btn btn-danger col-2 mt-4 mx-auto" onClick={handleButtonClick}>Cadastrar game</button>}
+          <NewGame isVisible={isCardVisible} />
+          {!isCardVisible2 && <button className="btn btn-danger col-2 mt-4 mx-auto" onClick={handleButtonClickClick}>Fazer busca</button>}
+          <Search isVisible={isCardVisible2} />
         </div>
-      </nav>
-      <div className="row">
-      {!isCardVisible && <button  className="btn btn-danger col-2 mt-4 mx-auto"onClick={handleButtonClick}>Mostrar Card</button>}
-      <NewGame isVisible={isCardVisible} />
-      <div className="btn btn-danger mt-4 col-2 mx-auto">Busca por filtro</div>
       </div>
       <br />
-      <div className="row">
+      <div className="row bg-holly bg-foda">
         {currentPageData.map((val: any, index) => (
-          <div className="col-sm-6 col-md-3 " key={val.id}>
+          <div className="col-sm-6 col-md-3 d-flex justify-content-center" key={val.id}>
             <Card
               listCard={currentPageData}
               setListCard={setCurrentPageData}
@@ -176,19 +159,97 @@ const App = () => {
             />
           </div>
         ))}
-      </div>
+     
       <div className="row">
         <div className="col-sm-3 col-md-5"></div>
-          <div className="col-sm-6 col-md-5">
-            <Pagination
-              count={totalPages}
+        <div className="col-sm-6 col-md-5 ms-5">
+          <Pagination
+            count={totalPages}
             shape="rounded"
             page={currentPage}
-              onChange={handlePageChange}
-            />
-          </div>
+            onChange={handlePageChange}
+            variant="outlined" 
+            color="secondary"
+          />
+        </div>
         <div className="col-sm-3 col-md-3"></div>
       </div>
+      </div>
+      <div className="bg-holly">
+      </div>
+      <footer>
+        <div id="footer_content">
+          <div id="footer_contacts">
+            <h1>GameX</h1>
+            <p>Games Games Games Games Games Games Games.</p>
+
+            <div id="footer_social_media">
+              <a href="#" className="footer-link" id="instagram">
+                <i className="fa-brands fa-instagram"></i>
+              </a>
+
+              <a href="#" className="footer-link" id="facebook">
+                <i className="fa-brands fa-facebook-f"></i>
+              </a>
+
+              <a href="#" className="footer-link" id="whatsapp">
+                <i className="fa-brands fa-whatsapp"></i>
+              </a>
+            </div>
+          </div>
+
+          <ul className="footer-list">
+            <li>
+              <h3>Blog</h3>
+            </li>
+            <li>
+              <a href="#" className="footer-link">Tech</a>
+            </li>
+            <li>
+              <a href="#" className="footer-link">Adventures</a>
+            </li>
+            <li>
+              <a href="#" className="footer-link">Music</a>
+            </li>
+          </ul>
+
+          <ul className="footer-list">
+            <li>
+              <h3>Products</h3>
+            </li>
+            <li>
+              <a href="#" className="footer-link">App</a>
+            </li>
+            <li>
+              <a href="#" className="footer-link">Desktop</a>
+            </li>
+            <li>
+              <a href="#" className="footer-link">Cloud</a>
+            </li>
+          </ul>
+
+          <div id="footer_subscribe">
+            <h3>Subscribe</h3>
+
+            <p>
+              Enter your e-mail to get notified about
+              our news solutions
+            </p>
+
+            <div id="input_group">
+              <input type="email" id="email" />
+                <button>
+                  <i className="fa-regular fa-envelope">search</i>
+                </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="footer_copyright">
+          GameX
+          2023 all rights reserved
+        </div>
+      </footer>
     </div>
   );
 };

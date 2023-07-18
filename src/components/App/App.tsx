@@ -6,6 +6,7 @@ import Dashboard from '../Dashboard/Dashboard.tsx'
 import Login from '../Login/Login.tsx';
 import useToken from './useToken.tsx'
 import Register from '../register/Register.tsx';
+import WishList from '../wishlist/WishList.tsx';
 
 function App() {
   const { token, setToken } = useToken();
@@ -19,6 +20,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Dashboard />}> </Route>
+          <Route path="/favorites" element={<WishList />}> </Route>
         </Routes>
       </BrowserRouter>
     </div>

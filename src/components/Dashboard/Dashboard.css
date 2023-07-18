@@ -12,7 +12,14 @@
 }
 
 .bg-foda {
+  border-radius: 50px 50px 0px 0px;
   background-image: url(../../styles/summer_sale.gif);
   background-repeat: no-repeat, repeat-x;
   background-position: top , center;
+}
+.bg-holly {
+  background-color: rgb(30, 60, 87);
+}
+.NAOAMIGO {
+  text-decoration: none;
 }
