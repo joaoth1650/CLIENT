@@ -157,9 +157,8 @@ const App = () => {
           </div>
         </div>
       </nav>
-      <br />
       <div className="row">
-      {!isCardVisible && <button  className="btn btn-danger col-2 mx-auto"onClick={handleButtonClick}>Mostrar Card</button>}
+      {!isCardVisible && <button  className="btn btn-danger col-2 mt-4 mx-auto"onClick={handleButtonClick}>Mostrar Card</button>}
       <NewGame isVisible={isCardVisible} />
       <div className="btn btn-danger mt-4 col-2 mx-auto">Busca por filtro</div>
       </div>
