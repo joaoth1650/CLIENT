@@ -9,8 +9,6 @@ import { Icon } from "@mui/material";
 
 export default function Card(props: any) {
   const [open, setOpen] = useState(false);
-  const [checked, setChecked] = useState<boolean>(false)
-
   
 
   return (
@@ -39,7 +37,8 @@ export default function Card(props: any) {
         <Checkbox
           icon={<BookmarkBorderIcon />}
           checkedIcon={<BookmarkIcon />}
-          onClick={() => props.handleRegisterFavorite(props.name,props.category,props.cost)}
+          checked={props.checked}
+          onClick={() => props.handleRegisterFavorite(props.name,props.category,props.cost, props.id)}
         />
         </div>
         <div className="btn btn-light">Carshopping</div>

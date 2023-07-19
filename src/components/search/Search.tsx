@@ -36,7 +36,7 @@ const Search: React.FC<CardProps> = ({ isVisible }) => {
 
   return (
   
-      <div className='col-6 mt-3'>
+      <div className='col-5 mt-3'>
       <form className="d-flex" onSubmit={handleSearchResult}>
         <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" value={NameValueSearch} onChange={(e) => setNameValueSearch(e.target.value)} />
         <button className="btn btn-outline-success" type="submit">Search</button>

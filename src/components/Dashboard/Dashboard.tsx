@@ -17,7 +17,6 @@ const App = () => {
   const [NameValueSearch, setNameValueSearch] = useState<string>('')
   const [selectValue, setSelectValue] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [checked, setChecked] = useState<boolean>(false)
   const [currentPageData, setCurrentPageData] = useState<any[]>([]);
   const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
@@ -57,10 +56,22 @@ const App = () => {
     "Jogos de Plataforma 2D",
     "Jogos de Plataforma 3D"
   ]
+  const [checkedObject, setCheckedObject] = useState<any>({}) 
+  
 
   useEffect(() => {
     fetchGamesData();
   }, []);
+
+  useEffect(() => {
+    if(currentPageData.length){
+    checkFavoriteList()
+    }
+  }, [currentPageData])
+  
+  useEffect(()=> {
+    console.log(checkedObject[1])
+  },[checkedObject])
 
   const headers = {
     'x-access-token': '',
@@ -78,6 +89,25 @@ const App = () => {
       // Lida com erros na requisição inicial
     }
   };
+
+  const checkFavoriteList = async () => {
+    headers['x-access-token'] = localStorage.getItem('token') ?? ""
+    if(currentPageData.length > 0) {
+      const response = await axios.get("http://localhost:3001/favorites", { headers })
+      const favoriteItems = response.data
+      if(favoriteItems.length > 0) {
+        currentPageData.forEach((data) => {
+          favoriteItems.find((item: any) => {
+            if(data.id === item.listaId) {
+              setCheckedObject((prevState: any)=>({
+                ...prevState, [data.id] : true
+              }))
+            } 
+          })
+        })
+      }
+    }
+  }
 
 
   const handleTokenChange = async () => {
@@ -118,16 +148,17 @@ const App = () => {
     setCardVisible2(!isCardVisible2);
   };
 
-  const handleRegisterFavorite = (name: string,category: string, cost: string) => {
+  const handleRegisterFavorite = (name: string,category: string, cost: string, id: number) => {
     headers['x-access-token'] = localStorage.getItem('token') ?? ""
     axios.post("http://localhost:3001/favorites/register",  {
       name: name,
       cost: cost,
       category: category,
+      listaId: id,
     }, {
       headers: headers
     }).then((response) => {
-      setChecked(true)
+     console.log('yee')
     });
   };
 
@@ -148,7 +179,7 @@ const App = () => {
                 </li>
                 <div className=" ms-4 btn btn-light"><ShoppingCartOutlinedIcon /></div>
               </ul>
-              <img src={perfil} className="rounded me-3" style={{ height: '60px' }} />
+              <img src={perfil} className="rounded-circle me-3" style={{ height: '60px' }} />
               <button className="btn btn-outline-danger" onClick={handleTokenChange}>logout</button>
             </div>
           </div>
@@ -162,17 +193,17 @@ const App = () => {
       </div>
       <br/>
       <div className="row">
-        {currentPageData.map((val: any, index) => (         
+        {checkedObject && currentPageData.map((val: any) => (         
           <div className="col-sm-6 col-md-3 d-flex justify-content-center" key={val.id}>           
             <Card
               listCard={currentPageData}
-              setListCard={setCurrentPageData}
-              checked={setChecked}           
+              setListCard={setCurrentPageData}          
               handleRegisterFavorite={handleRegisterFavorite}
               id={val.id}
               name={val.name}            
               cost={val.cost}
-              category={val.category}              
+              category={val.category}   
+              checked={checkedObject[val.id]}           
             />
           </div>
         ))}
@@ -188,7 +219,7 @@ const App = () => {
             variant="outlined" 
             color="secondary"
           />
-        </div>
+        </div> //row
         <div className="col-sm-3 col-md-3"></div>
       </div>
       </div>
@@ -272,3 +303,4 @@ const App = () => {
 };
 
 export default App;
+

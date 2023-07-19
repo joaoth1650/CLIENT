@@ -16,7 +16,7 @@ async function loginUser(credentials: any) {
  }
 
 const Login = ({ setToken }: any) => {
-  const [username, setUsername] = useState('');
+  const [name, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   // const handleLogin = () => {
@@ -33,7 +33,7 @@ const Login = ({ setToken }: any) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     const token = await loginUser({
-      username,
+      name,
       password
     });
     setToken(token);
@@ -51,9 +51,9 @@ const Login = ({ setToken }: any) => {
 
         <div className="wrap-input">
           <input
-            className={username !== "" ? "has-val input" : "input"}
+            className={name !== "" ? "has-val input" : "input"}
             type="text"
-            value={username}
+            value={name}
             onChange={(e) => setUsername(e.target.value)}
           />
           <span className="focus-input" data-placeholder="Email"></span>
