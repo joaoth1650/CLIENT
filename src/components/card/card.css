@@ -1,6 +1,4 @@
-.card-container {
-  width: 250px;
-
+/* .card-container {
   border: 3px solid #000000;
   border-radius: 5px;
   margin: 10px;
@@ -27,8 +25,8 @@
 
 .card-cost {
   margin-top: 15px;
-}
+} */
 
-.card-container:hover {
+/* .card-container:hover {
   background-color: rgb(255, 145, 0);
-}
+} */

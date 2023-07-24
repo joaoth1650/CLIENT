@@ -4,18 +4,29 @@ import FormDialog from "../dialog/dialogForm.jsx"
 import Checkbox from '@mui/material/Checkbox';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { Icon } from "@mui/material";
+import axios from "axios";
 
 export default function Card(props: any) {
   const [open, setOpen] = useState<boolean>(false);
+  const headers = {
+    'x-access-token': '',
+    'Content-Type': 'application/json',
+  };
 
+  const handleDestroyFavorite = ( id: number) => {
+    headers['x-access-token'] = localStorage.getItem('token') ?? ""
+    axios.delete(`http://localhost:3001/favorites/delete/${id}`)
+    .then((response) => {
+     console.log(response)
+    });
+  };
 
   return (
     <>
       <FormDialog
         open={open}
-        setOpen={setOpen}
+        setOpen={setOpen}        
         title={props.name}
         category={props.category}
         cost={props.cost}
@@ -23,9 +34,8 @@ export default function Card(props: any) {
         setListCard={props.setListCard}
         id={props.id}
       />
-      <div className="container">
-      <div className=" ms-5 card-container mt-4 container w-100 row">
-        <div className="card border-dark mb-3 col-8" onClick={() => setOpen(true)} >
+      <div className="card-container">
+        <div className="card border-dark mb-3 " onClick={() => setOpen(true)} >
           <div className="card-header"></div>
           <div className="card-body">
             <h1>{props.name}</h1>
@@ -33,21 +43,17 @@ export default function Card(props: any) {
             <h2 className="card-title">R${props.cost}</h2>
           </div>
         </div>
-        <div className=" col-4">
-          <div className=" rounded bg-light bg-gradient col-4 mb-1">
-            <div className="text-center">
-            <Checkbox
-              icon={<BookmarkBorderIcon />}
-              checkedIcon={<BookmarkIcon />}
-              onClick={() => props.handleRegisterFavorite(props.id)}
-            />
-            </div>
-          </div>
-          <div className="btn btn-light col-4">
-              <ShoppingCartOutlinedIcon />
-          </div>
+        <div className="d-flex justify-content-between">
+          <div className=" rounded bg-light bg-gradient">
+        <Checkbox
+          icon={<BookmarkBorderIcon />}
+          checkedIcon={<BookmarkIcon />}
+          checked={true}
+          onClick={() => handleDestroyFavorite(props.id)}
+        />
         </div>
-      </div>
+        <div className="btn btn-light">Carshopping</div>
+        </div>
       </div>
     </>
   );

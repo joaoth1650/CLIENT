@@ -11,78 +11,69 @@ import Search from '../search/Search'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import WishList from '../wishlist/WishList';
 
+const headers = {
+  'x-access-token': '',
+  'Content-Type': 'application/json',
+};
+
+const categorias_de_jogos = [
+  "Ação",
+  "Aventura",
+  "RPG",
+  "Estratégia",
+  "Esportes",
+  "Corrida",
+  "Simulação",
+  "Quebra-cabeças",
+  "Plataforma",
+  "Tiro",
+  "Luta",
+  "Jogos de Tabuleiro",
+  "Jogos de Cartas",
+  "Jogos de Palavras",
+  "Jogos Musicais",
+  "Jogos de Ficção Interativa",
+  "Jogos de Sobrevivência",
+  "Jogos de Mundo Aberto",
+  "Jogos de Terror",
+  "Jogos de Fantasia",
+  "Jogos de Sci-Fi",
+  "Jogos de História",
+  "Jogos Educativos",
+  "Jogos de Estratégia em Tempo Real",
+  "Jogos de Estratégia por Turnos",
+  "Jogos de Construção",
+  "Jogos de Gerenciamento",
+  "Jogos de Exploração",
+  "Jogos de Puzzle",
+  "Jogos de Arcade",
+  "Jogos de Plataforma 2D",
+  "Jogos de Plataforma 3D"
+]
+
 const App = () => {
+  const [isLoad, setIsLoad] = useState<boolean>(false);
   const [nameValue, setNameValue] = useState<string>('')
   const [costValue, setCostValue] = useState<string>('')
   const [NameValueSearch, setNameValueSearch] = useState<string>('')
   const [selectValue, setSelectValue] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageData, setCurrentPageData] = useState<any[]>([]);
-  const itemsPerPage = 12;
+  const itemsPerPage = 6;
   const [totalPages, setTotalPages] = useState(0);
   const [isCardVisible, setCardVisible] = useState(false);
   const [isCardVisible2, setCardVisible2] = useState(false);
-  const categorias_de_jogos = [
-    "Ação",
-    "Aventura",
-    "RPG",
-    "Estratégia",
-    "Esportes",
-    "Corrida",
-    "Simulação",
-    "Quebra-cabeças",
-    "Plataforma",
-    "Tiro",
-    "Luta",
-    "Jogos de Tabuleiro",
-    "Jogos de Cartas",
-    "Jogos de Palavras",
-    "Jogos Musicais",
-    "Jogos de Ficção Interativa",
-    "Jogos de Sobrevivência",
-    "Jogos de Mundo Aberto",
-    "Jogos de Terror",
-    "Jogos de Fantasia",
-    "Jogos de Sci-Fi",
-    "Jogos de História",
-    "Jogos Educativos",
-    "Jogos de Estratégia em Tempo Real",
-    "Jogos de Estratégia por Turnos",
-    "Jogos de Construção",
-    "Jogos de Gerenciamento",
-    "Jogos de Exploração",
-    "Jogos de Puzzle",
-    "Jogos de Arcade",
-    "Jogos de Plataforma 2D",
-    "Jogos de Plataforma 3D"
-  ]
+
   const [checkedObject, setCheckedObject] = useState<any>({}) 
   
 
-  useEffect(() => {
-    fetchGamesData();
-  }, []);
-
-  useEffect(() => {
-    if(currentPageData.length){
-    checkFavoriteList()
-    }
-  }, [currentPageData])
-  
-  useEffect(()=> {
-    console.log(checkedObject[1])
-  },[checkedObject])
-
-  const headers = {
-    'x-access-token': '',
-    'Content-Type': 'application/json',
-  };
 
   const fetchGamesData = async () => {
     try {
       headers['x-access-token'] = localStorage.getItem('token') ?? ""
       const response = await axios.get("http://localhost:3001/games", { headers });
       const gamesData = response.data;
+      setIsLoad(true);
       setTotalPages(Math.ceil(gamesData.length / itemsPerPage));
       setCurrentPageData(gamesData.slice(0, itemsPerPage));
     } catch (error) {
@@ -98,7 +89,7 @@ const App = () => {
       if(favoriteItems.length > 0) {
         currentPageData.forEach((data) => {
           favoriteItems.find((item: any) => {
-            if(data.id === item.listaId) {
+            if(data.id === item.gamesId) {
               setCheckedObject((prevState: any)=>({
                 ...prevState, [data.id] : true
               }))
@@ -148,22 +139,39 @@ const App = () => {
     setCardVisible2(!isCardVisible2);
   };
 
-  const handleRegisterFavorite = (name: string,category: string, cost: string, id: number) => {
+  const handleRegisterFavorite = ( id: number) => {
     headers['x-access-token'] = localStorage.getItem('token') ?? ""
     axios.post("http://localhost:3001/favorites/register",  {
-      name: name,
-      cost: cost,
-      category: category,
-      listaId: id,
+      gamesId: id,
+      usersId: 1,
     }, {
       headers: headers
     }).then((response) => {
-     console.log('yee')
+     console.log(response)
     });
   };
 
+  
+  useEffect( () => {
+    if(!isLoad) {
+      fetchGamesData();
+    }
+  }, []);
+
+
+  useEffect(() => {
+    if(currentPageData.length){
+    checkFavoriteList()
+    }
+  }, [currentPageData])
+  
+  if(!isLoad){
+    return <><h1>Carregando</h1></>
+  }
+
 
   return (
+    <div className="bg-escolhido">
     <div className="bg-foda">
       <div className="container">
         <nav className="navbar navbar-expand-lg bg-light redondo bg-dark ">
@@ -193,8 +201,8 @@ const App = () => {
       </div>
       <br/>
       <div className="row">
-        {checkedObject && currentPageData.map((val: any) => (         
-          <div className="col-sm-6 col-md-3 d-flex justify-content-center" key={val.id}>           
+        {currentPageData.map((val: any) => (         
+          <div className="col-sm-6 col-md-12" key={val.id}>           
             <Card
               listCard={currentPageData}
               setListCard={setCurrentPageData}          
@@ -219,7 +227,7 @@ const App = () => {
             variant="outlined" 
             color="secondary"
           />
-        </div> //row
+        </div>
         <div className="col-sm-3 col-md-3"></div>
       </div>
       </div>
@@ -298,6 +306,7 @@ const App = () => {
           2023 all rights reserved
         </div>
       </footer>
+    </div>
     </div>
   );
 };

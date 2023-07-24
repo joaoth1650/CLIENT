@@ -1,18 +1,21 @@
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import perfil from '../../styles/oms.jpg'
 import './Wishlist.css'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import Search from '../search/Search';
 import axios from 'axios';
-import Card from '../card/card';
+import Card from '../card/cardWishlist';
+
+interface Game {
+  id: number;
+  name: string;
+  cost: number;
+  category: string;
+}
+
 const WishList = () => {
   const [isCardVisible, setCardVisible] = useState(false);
-  const [nameValue, setNameValue] = useState<string>('')
-  const [costValue, setCostValue] = useState<string>('')
-  const [NameValueSearch, setNameValueSearch] = useState<string>('')
-  const [selectValue, setSelectValue] = useState<string>('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [currentPageData, setCurrentPageData] = useState<any[]>([]);
+  const [favoritesData, setFavoritesData] = useState<Game[]>([]);
   const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
   const headers = {
@@ -23,10 +26,10 @@ const WishList = () => {
   const handleButtonClick = () => {
     setCardVisible(!isCardVisible);
   };
+
   useEffect(() => {
     fetchFavoritesData();
   }, []);
-  
 
   const handleTokenChange = async () => {
     headers['x-access-token'] = localStorage.getItem('token') ?? ""
@@ -40,14 +43,26 @@ const WishList = () => {
         console.log(error)
       });
   }
-
   const fetchFavoritesData = async () => {
     try {
-      headers['x-access-token'] = localStorage.getItem('token') ?? ""
+      headers['x-access-token'] = localStorage.getItem('token') ?? "";
       const response = await axios.get("http://localhost:3001/favorites", { headers });
-      const gamesData = response.data;
-      setTotalPages(Math.ceil(gamesData.length / itemsPerPage));
-      setCurrentPageData(gamesData.slice(0, itemsPerPage));
+      const favoritesData = response.data;
+     
+      // Mapeia os dados para buscar o nome e o preço de cada jogo favoritado
+      const gamesInfo = await Promise.all(favoritesData.map(async (favorite: any) => {
+          const {data} = await axios.get(`http://localhost:3001/games/${favorite.gamesId}`);
+          const gameData = data[0];
+          return {           
+            id: gameData.id,
+            name: gameData.name,
+            cost: gameData.cost,
+          };      
+        })
+      );
+      
+      
+      setFavoritesData(gamesInfo);
     } catch (error) {
       console.log(error);
     }
@@ -56,45 +71,44 @@ const WishList = () => {
   return (
     <div>
       <div className="bg-summer-primav">
-       <div className="container">
-        <nav className="navbar navbar-expand-lg bg-light rounded-3 bg-dark ">
-          <div className="container-fluid ">
-            <a className="navbar-brand text-light" href="http://localhost:5173/?">Lojinha games</a>
-            <div className="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                <li className="nav-item">
-                  <a className="nav-link active text-light" aria-current="page" href="#">Home</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link text-light" href="#">Wishlist</a>
-                </li>
-                <div className=" ms-1 btn btn-light"><ShoppingCartOutlinedIcon /></div>
-              </ul>
-              <img src={perfil} className="rounded-circle me-3" style={{ height: '60px' }} />
-              <button className="btn btn-outline-danger" onClick={handleTokenChange}>logout</button>
+        <div className="container">
+          <nav className="navbar navbar-expand-lg bg-light rounded-3 bg-dark ">
+            <div className="container-fluid ">
+              <a className="navbar-brand text-light" href="http://localhost:5173/?">Lojinha games</a>
+              <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li className="nav-item">
+                    <a className="nav-link active text-light" aria-current="page" href="#">Home</a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link text-light" href="#">Wishlist</a>
+                  </li>
+                  <div className=" ms-1 btn btn-light"><ShoppingCartOutlinedIcon /></div>
+                </ul>
+                <img src={perfil} className="rounded-circle me-3" style={{ height: '60px' }} />
+                <button className="btn btn-outline-danger" onClick={handleTokenChange}>logout</button>
+              </div>
             </div>
+          </nav>
+          <div className=" row d-flex justify-content-center">
+            {!isCardVisible && <button className="btn btn-danger col-6 mt-4 mx-auto" onClick={handleButtonClick}>Fazer busca</button>}
+            <Search isVisible={isCardVisible} />
           </div>
-        </nav>
-        <div className=" row d-flex justify-content-center">
-          {!isCardVisible && <button className="btn btn-danger col-6 mt-4 mx-auto" onClick={handleButtonClick}>Fazer busca</button>}
-          <Search isVisible={isCardVisible} />
+          <div className="row">
+            {favoritesData.map((val: any, index) => (
+              <div className="col-sm-6 col-md-12 d-flex justify-content-center" key={index}>
+                <Card
+                  listCard={favoritesData}
+                  setListCard={setFavoritesData}
+                  id={val.id}
+                  name={val.name}
+                  cost={val.cost}
+                  category={val.category}
+                />
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="row">
-        {currentPageData.map((val: any) => (         
-          <div className="col-sm-6 col-md-3 d-flex justify-content-center" key={val.id}>           
-            <Card
-              listCard={currentPageData}
-              setListCard={setCurrentPageData}
-                        
-              id={val.id}
-              name={val.name}            
-              cost={val.cost}
-              category={val.category}              
-            />
-          </div>
-        ))}
-        </div >     
-      </div>
       </div>
       <footer>
         <div id="footer_content">
@@ -157,9 +171,9 @@ const WishList = () => {
 
             <div id="input_group">
               <input type="email" id="email" />
-                <button>
-                  <i className="fa-regular fa-envelope">search</i>
-                </button>
+              <button>
+                <i className="fa-regular fa-envelope">search</i>
+              </button>
             </div>
           </div>
         </div>
@@ -170,7 +184,7 @@ const WishList = () => {
         </div>
       </footer>
     </div>
-   
+
   )
 }
 
