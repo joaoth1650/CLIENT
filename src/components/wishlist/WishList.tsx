@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import perfil from '../../styles/oms.jpg'
 import './Wishlist.css'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import Search from '../search/Search';
 import axios from 'axios';
 import Card from '../card/cardWishlist';
 
@@ -15,6 +14,7 @@ interface Game {
 
 const WishList = () => {
   const [isCardVisible, setCardVisible] = useState(false);
+  const [NameValueSearch, setNameValueSearch] = useState<string>('')
   const [favoritesData, setFavoritesData] = useState<Game[]>([]);
   const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
@@ -43,29 +43,55 @@ const WishList = () => {
         console.log(error)
       });
   }
+
   const fetchFavoritesData = async () => {
     try {
       headers['x-access-token'] = localStorage.getItem('token') ?? "";
       const response = await axios.get("http://localhost:3001/favorites", { headers });
       const favoritesData = response.data;
-     
+
       // Mapeia os dados para buscar o nome e o preço de cada jogo favoritado
       const gamesInfo = await Promise.all(favoritesData.map(async (favorite: any) => {
-          const {data} = await axios.get(`http://localhost:3001/games/${favorite.gamesId}`);
-          const gameData = data[0];
-          return {           
-            id: gameData.id,
-            name: gameData.name,
-            cost: gameData.cost,
-          };      
-        })
+        const { data } = await axios.get(`http://localhost:3001/games/${favorite.gamesId}`);
+        const gameData = data[0];
+        return {
+          id: gameData.id,
+          name: gameData.name,
+          cost: gameData.cost,
+        };
+      })
       );
-      
-      
+
+
       setFavoritesData(gamesInfo);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleSearchResult = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); // Evita o comportamento padrão de recarregar a página
+    headers['x-access-token'] = localStorage.getItem('token') ?? ""
+    if (NameValueSearch !== '') {
+
+      axios.get(`http://localhost:3001/games/search/${NameValueSearch}`)
+        .then((response) => {
+          setFavoritesData(response.data);
+          // setCurrentPage(1);
+        });
+    } else {
+      setFavoritesData([]);
+      // setCurrentPage(1);
+    }
+  };
+
+  const handleRegisterFavoriteChange = (id: number) => {
+    headers['x-access-token'] = localStorage.getItem('token') ?? ""
+    axios.delete(`http://localhost:3001/favorites/delete/${id}`, 
+    { headers: headers })
+    .then((response) => {
+      console.log(response);
+    });
   };
 
   return (
@@ -90,9 +116,11 @@ const WishList = () => {
               </div>
             </div>
           </nav>
-          <div className=" row d-flex justify-content-center">
-            {!isCardVisible && <button className="btn btn-danger col-6 mt-4 mx-auto" onClick={handleButtonClick}>Fazer busca</button>}
-            <Search isVisible={isCardVisible} />
+          <div className='col-5 mt-3'>
+            <form className="d-flex" onSubmit={handleSearchResult}>
+              <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" value={NameValueSearch} onChange={(e) => setNameValueSearch(e.target.value)} />
+              <button className="btn btn-outline-success" type="submit">Search</button>
+            </form>
           </div>
           <div className="row">
             {favoritesData.map((val: any, index) => (
@@ -100,6 +128,7 @@ const WishList = () => {
                 <Card
                   listCard={favoritesData}
                   setListCard={setFavoritesData}
+                  handleRegisterFavoriteChange={handleRegisterFavoriteChange}
                   id={val.id}
                   name={val.name}
                   cost={val.cost}

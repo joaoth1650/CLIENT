@@ -10,6 +10,7 @@ import { Icon } from "@mui/material";
 export default function Card(props: any) {
   const [open, setOpen] = useState<boolean>(false);
 
+  // console.log('aaaa',props.id, props.structureTrue)
 
   return (
     <>
@@ -35,10 +36,11 @@ export default function Card(props: any) {
         </div>
         <div className=" col-4">
           <div className=" rounded bg-light bg-gradient col-4 mb-1">
-            <div className="text-center">
+            <div className="text-center mt-4">
             <Checkbox
               icon={<BookmarkBorderIcon />}
               checkedIcon={<BookmarkIcon />}
+              checked={props.structureTrue[props.id] || false}
               onClick={() => props.handleRegisterFavorite(props.id)}
             />
             </div>

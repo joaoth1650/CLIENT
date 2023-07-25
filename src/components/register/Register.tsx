@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import Login from '../Login/Login.tsx'
 import LayoutComponents from "../../components/LayoutComponents/"
 import PropTypes from 'prop-types';
 import jake from '../../styles/jake.svg'
@@ -8,16 +9,18 @@ async function registerUser(credentials: any) {
   return fetch('http://localhost:3001/users/register', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'x-access-token': credentials
     },
     body: JSON.stringify(credentials)
   })
     .then(data => data.json())
  }
 
+
 export const Register = ({ setToken }: any) => {
-  const [email, setEmail] = useState("");
-  const [username, setUserName] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
 
 
@@ -25,10 +28,12 @@ export const Register = ({ setToken }: any) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     const token = await registerUser({
-      username,
+      name,
+      email,
       password
     });
     setToken(token);
+    location.reload();
   }
 
 
@@ -44,10 +49,10 @@ export const Register = ({ setToken }: any) => {
 
         <div className="wrap-input">
           <input
-            className={username !== "" ? "has-val input" : "input"}
+            className={name !== "" ? "has-val input" : "input"}
             type="text"
-            value={username}
-            onChange={(e) => setUserName(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
           <span className="focus-input" data-placeholder="Nome"></span>
         </div>
@@ -73,11 +78,13 @@ export const Register = ({ setToken }: any) => {
         </div>
 
         <div className="container-login-form-btn"> 
-        <button  className="login-form-btn" type="submit">Cadastrar</button>   
+        <button  className="login-form-btn" type="submit">Cadastrar</button>         
         </div>
 
         <div className="text-center">
+       
           <span className="txt1">Já possui conta? </span>
+       
         </div>
       </form>
     </LayoutComponents>

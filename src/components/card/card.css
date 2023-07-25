@@ -30,3 +30,10 @@
 /* .card-container:hover {
   background-color: rgb(255, 145, 0);
 } */
+
+.text-centerr {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}

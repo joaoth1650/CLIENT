@@ -19,17 +19,6 @@ const Login = ({ setToken }: any) => {
   const [name, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  // const handleLogin = () => {
-  //   axios
-  //     .post("http://localhost:3001/login", { username, password })
-  //     .then(response => {
-  //       console.log(response);
-  //     })
-  //     .catch(error => {
-  //       console.error(error);
-  //     });
-  // };
-
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     const token = await loginUser({
