@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom'
 import axios from 'axios';
 import './Dashboard.css'
 import './index.css'
+import banner from '../../styles/capbanner.jpg'
 import perfil from '../../styles/oms.jpg'
 import { Pagination } from '@mui/material';
 import Card from '../card/card';
 import NewGame from '../newGame/NewGame'
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import WishList from '../wishlist/WishList';
 
 const headers = {
@@ -51,38 +51,42 @@ const categorias_de_jogos = [
 ]
 
 const App = () => {
-  const [isLoad, setIsLoad] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
   const [NameValueSearch, setNameValueSearch] = useState<string>('')
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageData, setCurrentPageData] = useState<any[]>([]);
   const itemsPerPage = 6;
   const [totalPages, setTotalPages] = useState(0);
   const [isCardVisible, setCardVisible] = useState(false);
-  const [isTrue, setIsTrue] = useState<boolean>();
   const [checkedObject, setCheckedObject] = useState<any>({})
   const [favoriteItems, setFavoriteItems] = useState<any[]>([]);
-  
-  useEffect(() => {
-    if (!isLoad) {
-      fetchGamesData();
-      getFavorite();
-    }
-  }, []);
 
   useEffect(() => {
     if (currentPageData.length > 0) {
       checkFavoriteList()
-      
+
     }
   }, [currentPageData])
-  
+
+  useEffect(() => {
+    fetchGamesData();
+    getFavorite();
+    setLoading(false);
+
+  }, []);
+
+
+  const handleChangePage = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo(0, 0); // Isso vai levar o usuário ao topo da página
+  };
 
   const fetchGamesData = async () => {
     try {
       headers['x-access-token'] = localStorage.getItem('token') ?? ""
       const response = await axios.get("http://localhost:3001/games", { headers });
       const gamesData = response.data;
-      setIsLoad(true);
+      // setIsLoad(true);
       setTotalPages(Math.ceil(gamesData.length / itemsPerPage));
       setCurrentPageData(gamesData.slice(0, itemsPerPage));
     } catch (error) {
@@ -95,7 +99,7 @@ const App = () => {
       headers['x-access-token'] = localStorage.getItem('token') ?? ""
       const response = await axios.get("http://localhost:3001/favorites", { headers });
       const glob = response.data;
-    
+
       setFavoriteItems(glob)
     } catch (error) {
       console.log(error)
@@ -103,19 +107,17 @@ const App = () => {
   };
 
   const checkFavoriteList = () => {
-        currentPageData.forEach((data) => {
-          favoriteItems.find((item: any) => {
-            // console.log(data, item)
-            if (data.id === item.gamesId) {
-              setCheckedObject((prevState: any) => ({
-                ...prevState, [data.id]: true
-            }))        
-            }         
-          })
-        })
-    }
-  
-
+    currentPageData.forEach((data) => {
+      favoriteItems.find((item: any) => {
+        // console.log(data, item)
+        if (data.id === item.gamesId) {
+          setCheckedObject((prevState: any) => ({
+            ...prevState, [data.id]: true
+          }))
+        }
+      })
+    })
+  }
 
   const handleTokenChange = async () => {
     headers['x-access-token'] = localStorage.getItem('token') ?? ""
@@ -141,6 +143,7 @@ const App = () => {
       .then(response => {
         setCurrentPage(page);
         setCurrentPageData(response.data.content);
+        handleChangePage(page)
       })
       .catch(error => {
         // Lida com erros na requisição
@@ -176,37 +179,50 @@ const App = () => {
     }, {
       headers: headers
     }).then((response) => {
-      []
+      location.reload();
     });
   };
 
-  // const handleChangeFavorite = () => {
-  //   if()
-  // }
+  const handleDeleteFavorite = (id: number) => {
+    headers['x-access-token'] = localStorage.getItem('token') ?? ""
+    axios.delete(`http://localhost:3001/favorites/delete/${id}`,
+      { headers: headers })
+      .then((response) => {
+        location.reload();
+      });
+  };
 
 
 
-  if (!isLoad) {
-    return <div className=" mx-auto container"><h1>CARREGANDO</h1></div>
-  }
-
-
-  return (
-    <div className="bg-escolhido">
+  return loading ? <>(
+    <div className="col-sm-6 col-md-11">
+      <div className="skeleton-loading mb-3" style={{ height: '200px' }}></div>
+      <div className="skeleton-loading mb-3" style={{ height: '20px', width: '60%' }}></div>
+      <div className="skeleton-loading" style={{ height: '20px', width: '40%' }}></div>
+    </div>
+    ) </> : (
+    <div className="bg-escolhido ">
       <div className="bg-foda">
         <div className="container">
           <nav className="navbar navbar-expand-lg bg-light redondo bg-dark ">
-            <div className="container-fluid ">
+            <div className="container-fluid ms-5 me-5">
               <a className="navbar-brand text-light" href="http://localhost:5173/?">Lojinha games</a>
               <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                   <li className="nav-item">
-                    <a className="nav-link active text-light" aria-current="page" href="#">Home</a>
+                    <a className="nav-link active text-light" aria-current="page" href="/">Home</a>
                   </li>
                   <li className="nav-item mt-2 ms-4">
                     <Link to="/favorites" className='NAOAMIGO text-light'>WishList</Link>
                   </li>
-                  <div className=" ms-4 btn btn-light"><ShoppingCartOutlinedIcon /></div>
+                  <li>{!isCardVisible && <button className="btn btn-danger  ms-4" onClick={handleButtonClick}>Cadastrar game</button>}
+                  </li>
+                  <div className="col-6">
+                    <form className="d-flex ms-5" onSubmit={handleSearchResult}>
+                      <input className="form-control me-1" type="search" placeholder="Search" value={NameValueSearch} onChange={(e) => setNameValueSearch(e.target.value)} />
+                      <button className="btn btn-success" type="submit">Search</button>
+                    </form>
+                  </div>
                 </ul>
                 <img src={perfil} className="rounded-circle me-3" style={{ height: '60px' }} />
                 <button className="btn btn-outline-danger" onClick={handleTokenChange}>logout</button>
@@ -214,45 +230,41 @@ const App = () => {
             </div>
           </nav>
           <div className="row ms-5">
-            {!isCardVisible && <button className="btn btn-danger col-2 mt-4 mx-auto" onClick={handleButtonClick}>Cadastrar game</button>}
             <NewGame isVisible={isCardVisible} />
-            <div className='col-5 mt-3'>
-              <form className="d-flex" onSubmit={handleSearchResult}>
-                <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" value={NameValueSearch} onChange={(e) => setNameValueSearch(e.target.value)} />
-                <button className="btn btn-success" type="submit">Search</button>
-              </form>
-            </div>
           </div>
         </div>
         <br />
         <div className="container">
-          <div className="row ms-5">
+          <div className="row ms-5 d-flex justify-content-center ">
             {currentPageData.map((val: any) => (
               <div className="col-sm-6 col-md-11" key={val.id}>
                 <Card
                   listCard={currentPageData}
                   setListCard={setCurrentPageData}
                   handleRegisterFavorite={handleRegisterFavorite}
+                  handleDeleteFavorite={handleDeleteFavorite}
                   id={val.id}
                   name={val.name}
                   cost={val.cost}
                   category={val.category}
                   structureTrue={checkedObject}
-                  // checked={checkedObject[val.id]}
+                  
+                // checked={checkedObject[val.id]}
                 />
               </div>
             ))}
 
             <div className="row">
-              <div className="col-sm-3 col-md-5"></div>
-              <div className="col-sm-6 col-md-5 ms-5">
+              <div className="col-sm-3 col-md-4"></div>
+              <div className="col-sm-6 col-md-4 bg-white rounded w-25 text-center">
                 <Pagination
                   count={totalPages}
                   shape="rounded"
                   page={currentPage}
                   onChange={handlePageChange}
-                  variant="outlined"
                   color="secondary"
+                  siblingCount={1}
+                  boundaryCount={2}
                 />
               </div>
               <div className="col-sm-3 col-md-3"></div>

@@ -25,27 +25,25 @@ export default function Card(props: any) {
       />
       <div className="container ms-5">
       <div className=" ms-5 card-container mt-4 container w-100 row">
-        <div className="card border-dark mb-3 col-8" onClick={() => setOpen(true)} >
+        <div className="card border-dark mb-3 col-8 dialogo" onClick={() => setOpen(true)} >
           <div className="card-header"></div>
           <div className="card-body">
             <h1>{props.name}</h1>
-            <h5>{props.category}</h5>
+            <h5 className="bg-colores">{props.category}</h5>
             <h2 className="card-title">R${props.cost}</h2>
           </div>
         </div>
         <div className=" col-4">
-          <div className=" rounded bg-light bg-gradient col-4 mb-1">
-            <div className="text-center">
-            <Checkbox
-              icon={<BookmarkBorderIcon />}
-              checkedIcon={<BookmarkIcon />}
+          <div className=" rounded bg-light bg-gradient col-4 ">
+            <div className="mt-4">
+            <Checkbox 
+              style={{ height: 100}}
+              icon={<BookmarkBorderIcon style={{ width: 110 }} sx={{ fontSize: 35 }} />}
+              checkedIcon={<BookmarkIcon style={{ width: 110 }} sx={{ fontSize: 35 }}  />}
               checked={true}
               onClick={() => props.handleRegisterFavoriteChange(props.id)}
             />
             </div>
-          </div>
-          <div className="btn btn-light col-4">
-              <ShoppingCartOutlinedIcon />
           </div>
         </div>
       </div>

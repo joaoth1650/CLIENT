@@ -15,7 +15,7 @@ async function registerUser(credentials: any) {
     body: JSON.stringify(credentials)
   })
     .then(data => data.json())
- }
+}
 
 
 export const Register = ({ setToken }: any) => {
@@ -77,14 +77,14 @@ export const Register = ({ setToken }: any) => {
           <span className="focus-input" data-placeholder="Password"></span>
         </div>
 
-        <div className="container-login-form-btn"> 
-        <button  className="login-form-btn" type="submit">Cadastrar</button>         
+        <div className="container-login-form-btn">
+          <button className="login-form-btn" type="submit">Cadastrar</button>
         </div>
 
         <div className="text-center">
-       
-          <span className="txt1">Já possui conta? </span>
-       
+        
+            <span className="txt1">Já possui conta? </span>
+          
         </div>
       </form>
     </LayoutComponents>

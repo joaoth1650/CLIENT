@@ -1,5 +1,6 @@
 import {useState} from 'react'
 import axios from 'axios'
+import './NewGame.css'
 
 
 interface CardProps {
@@ -7,9 +8,6 @@ interface CardProps {
 }
 
 const NewGame: React.FC<CardProps> = ({ isVisible }) => {
-  if (!isVisible) {
-    return null;
-  }
   const [nameValue, setNameValue] = useState<string>('')
   const [costValue, setCostValue] = useState<string>('')
   const [selectValue, setSelectValue] = useState<string>('');
@@ -78,11 +76,15 @@ const NewGame: React.FC<CardProps> = ({ isVisible }) => {
       setCostValue('')
       setSelectValue('')
     });
-    location.reload();
+    // location.reload();
   };
 
+  if (!isVisible) {
+    return null;
+  }
+
   return (
-    <div className='col-6'>
+    <div className='col-11 sistema'>
        <div className="container card mt-3 px-2">
         <h1 className="text-center">lojinha gamer</h1>
         <div className="input-group mb-3">

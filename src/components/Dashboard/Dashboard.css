@@ -9,7 +9,24 @@
 
 .bg-escolhido {
   background-color: #141820;
+  
 }
+.skeleton-loading {
+  background-color: #f3f3f3;
+  background-image: linear-gradient(90deg, #f3f3f3 25%, #e5e5e5 37%, #f3f3f3 63%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 
 .bg-foda {
   border-radius: 0px 0px 0px 0px;
@@ -18,13 +35,6 @@
   background-position: top , center;
   background-size: 4000px;
 
-}
-.bg-fodaParteCima {
-  border-radius: 0px 0px 5px 5px;
-  background-image: url(../../styles/summer_sale.gif);
-  background-repeat: no-repeat, repeat-x;
-  background-position: bottom;
-  background-size: 3000px;
 }
 .NAOAMIGO {
   text-decoration: none;

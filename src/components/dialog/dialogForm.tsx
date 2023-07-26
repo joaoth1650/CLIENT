@@ -7,7 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Axios from "axios";
-
+import './dialog.css'
 
 
 const headers = {
@@ -76,12 +76,13 @@ const FormDialog = (props: any) => {
   };
 
   return (
-    <div>
+    <div className="sistem23">
       <Dialog
         open={props.open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
+        
         <DialogTitle id="form-dialog-title">Editar</DialogTitle>
         <DialogContent>
           <TextField
@@ -126,6 +127,7 @@ const FormDialog = (props: any) => {
             Salvar
           </Button>
         </DialogActions>
+        
       </Dialog>
     </div>
   );

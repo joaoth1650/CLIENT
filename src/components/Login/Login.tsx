@@ -1,6 +1,8 @@
 import { useState } from "react";
 import PropTypes from 'prop-types';
+import { Link } from "react-router-dom";
 import jake from '../../styles/jake.svg'
+import Register from "../register/Register";
 import  LayoutComponents  from "../../components/LayoutComponents";
 
 async function loginUser(credentials: any) {
@@ -65,8 +67,10 @@ const Login = ({ setToken }: any) => {
         </div>
 
         <div className="text-center">
-          <span className="txt1">Não possui conta? </span>
+          <span className="txt1">Não possui conta?</span>
+        
           <span className="txt2">Criar conta.</span> 
+          
         </div>
       </form>
     </LayoutComponents>

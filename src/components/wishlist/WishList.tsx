@@ -87,19 +87,19 @@ const WishList = () => {
 
   const handleRegisterFavoriteChange = (id: number) => {
     headers['x-access-token'] = localStorage.getItem('token') ?? ""
-    axios.delete(`http://localhost:3001/favorites/delete/${id}`, 
-    { headers: headers })
-    .then((response) => {
-      console.log(response);
-    });
+    axios.delete(`http://localhost:3001/favorites/delete/${id}`,
+      { headers: headers })
+      .then((response) => {
+        console.log(response);
+      });
   };
 
   return (
     <div>
       <div className="bg-summer-primav">
         <div className="container">
-          <nav className="navbar navbar-expand-lg bg-light rounded-3 bg-dark ">
-            <div className="container-fluid ">
+          <nav className="navbar navbar-expand-lg bg-light redondo bg-dark ">
+            <div className="container-fluid ms-5 me-5">
               <a className="navbar-brand text-light" href="http://localhost:5173/?">Lojinha games</a>
               <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
@@ -109,7 +109,10 @@ const WishList = () => {
                   <li className="nav-item">
                     <a className="nav-link text-light" href="#">Wishlist</a>
                   </li>
-                  <div className=" ms-1 btn btn-light"><ShoppingCartOutlinedIcon /></div>
+                  <form className="d-flex ms-5 col-12" onSubmit={handleSearchResult}>
+                    <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" value={NameValueSearch} onChange={(e) => setNameValueSearch(e.target.value)} />
+                    <button className="btn btn-success" type="submit">Search</button>
+                  </form>
                 </ul>
                 <img src={perfil} className="rounded-circle me-3" style={{ height: '60px' }} />
                 <button className="btn btn-outline-danger" onClick={handleTokenChange}>logout</button>
@@ -117,25 +120,32 @@ const WishList = () => {
             </div>
           </nav>
           <div className='col-5 mt-3'>
-            <form className="d-flex" onSubmit={handleSearchResult}>
-              <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" value={NameValueSearch} onChange={(e) => setNameValueSearch(e.target.value)} />
-              <button className="btn btn-outline-success" type="submit">Search</button>
-            </form>
+
           </div>
           <div className="row">
-            {favoritesData.map((val: any, index) => (
-              <div className="col-sm-6 col-md-12 d-flex justify-content-center" key={index}>
-                <Card
-                  listCard={favoritesData}
-                  setListCard={setFavoritesData}
-                  handleRegisterFavoriteChange={handleRegisterFavoriteChange}
-                  id={val.id}
-                  name={val.name}
-                  cost={val.cost}
-                  category={val.category}
-                />
+            {favoritesData.length === 0 ? (
+              <>
+              <div className="col-12 text-center mt-3">
+                <h1 className="text-white">Nenhum item favorito encontrado.</h1>
               </div>
-            ))}
+              <img src="https://http.dog/404.jpg" className="img-responsive w-75 mx-auto mb-5" alt="" />
+              
+              </>
+            ) : (
+              favoritesData.map((val: any, index) => (
+                <div className="col-sm-6 col-md-12 d-flex justify-content-center" key={index}>
+                  <Card
+                    listCard={favoritesData}
+                    setListCard={setFavoritesData}
+                    handleRegisterFavoriteChange={handleRegisterFavoriteChange}
+                    id={val.id}
+                    name={val.name}
+                    cost={val.cost}
+                    category={val.category}
+                  />
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

@@ -9,8 +9,17 @@ import { Icon } from "@mui/material";
 
 export default function Card(props: any) {
   const [open, setOpen] = useState<boolean>(false);
+  const [clickCount, setClickCount] = useState(0);
 
-  // console.log('aaaa',props.id, props.structureTrue)
+  const handleCheckboxClick = () => {
+    setClickCount((prevCount) => prevCount + 1);
+    // Executa a primeira função no primeiro clique, a segunda função no segundo clique
+    if (clickCount === 0) {
+      props.handleRegisterFavorite(props.id);
+    } else if (clickCount === 1) {
+      props.handleDeleteFavorite(props.id);
+    }
+  };
 
   return (
     <>
@@ -24,29 +33,27 @@ export default function Card(props: any) {
         setListCard={props.setListCard}
         id={props.id}
       />
-      <div className="container">
+      <div className="container" >
       <div className=" ms-5 card-container mt-4 container w-100 row">
-        <div className="card border-dark mb-3 col-8" onClick={() => setOpen(true)} >
+        <div className="card border-dark mb-3 dialogo bg-color col-10" onClick={() => setOpen(true)} >
           <div className="card-header"></div>
-          <div className="card-body">
+          <div className="card-body ">
             <h1>{props.name}</h1>
-            <h5>{props.category}</h5>
+            <h5 className="bg-colores rounded-5 border-3 w-25 text-center mt-0">{props.category}</h5>
             <h2 className="card-title">R${props.cost}</h2>
           </div>
         </div>
-        <div className=" col-4">
-          <div className=" rounded bg-light bg-gradient col-4 mb-1">
-            <div className="text-center mt-4">
-            <Checkbox
-              icon={<BookmarkBorderIcon />}
-              checkedIcon={<BookmarkIcon />}
+        <div className="col-2 ">
+          <div className=" rounded bg-light bg-gradient h-50 col-6 ">
+            <div className="d-flex justify-content-center mt-4 ">
+            <Checkbox 
+              style={{ height: 100}}
+              icon={<BookmarkBorderIcon style={{ width: 110 }} sx={{ fontSize: 35 }} />}
+              checkedIcon={<BookmarkIcon style={{ width: 110 }} sx={{ fontSize: 35 }}  />}
               checked={props.structureTrue[props.id] || false}
-              onClick={() => props.handleRegisterFavorite(props.id)}
+              onClick={handleCheckboxClick}
             />
             </div>
-          </div>
-          <div className="btn btn-light col-4">
-              <ShoppingCartOutlinedIcon />
           </div>
         </div>
       </div>
